@@ -1,0 +1,32 @@
+name: Publish Android APK
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download successfully built APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          gh run download 44749308383 -n Dolboebometr-Android-APK -D dist
+          test -s dist/app-debug.apk
+          mv dist/app-debug.apk dist/Dolboebometr-v0.1.0-Android.apk
+          ls -lh dist/
+      - name: Publish public GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            gh release upload v0.1.0 dist/Dolboebometr-v0.1.0-Android.apk --clobber
+          else
+            gh release create v0.1.0 dist/Dolboebometr-v0.1.0-Android.apk --title "Долбоёбометр v0.1.0 · Android" --notes "Первая тестовая APK-сборка. Камера и демонстрационный анализ работают без сервера; для реального ИИ-анализа нужен сервер. APK подписан отладочным ключом; не использовать для распространения в магазине." --target "${GITHUB_SHA}"
+          fi
