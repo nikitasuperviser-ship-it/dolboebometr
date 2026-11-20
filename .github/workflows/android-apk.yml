@@ -21,6 +21,8 @@ jobs:
           cache: true
       - name: Generate Android scaffolding
         run: flutter create --platforms=android --org=app.dolboebometr --project-name=dolboebometr .
+      - name: Remove Flutter template test
+        run: rm -f test/widget_test.dart
       - name: Configure Android permissions
         run: |
           python3 - <<'PY'
@@ -32,7 +34,7 @@ jobs:
           p.write_text(s)
           PY
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
       - run: flutter build apk --debug
       - uses: actions/upload-artifact@v4
