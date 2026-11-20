@@ -36,10 +36,10 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos
       - run: flutter test
-      - run: flutter build apk --debug
+      - run: flutter build apk --release --split-per-abi
       - uses: actions/upload-artifact@v4
         with:
-          name: Dolboebometr-Android-APK
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: Dolboebometr-Android-ARM64
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
           if-no-files-found: error
           retention-days: 14
